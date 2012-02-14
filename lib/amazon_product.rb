@@ -18,16 +18,19 @@ class AmazonProduct
 
   attr_reader :connection
 
+  # @param access_key_id [String] your Amazon access key ID
+  # @param secret_access_key [String] your Amazon secret access key
+  # @param associate_tag [String] your Amazon associate tag
   def initialize(access_key_id, secret_access_key, associate_tag)
     @access_key_id = access_key_id
     @secret_access_key = secret_access_key
     @associate_tag = associate_tag
     @connection = Net::HTTP.new(ENDPOINT.host, ENDPOINT.port)
     @default_params = {
-        'Service' => SERVICE,
-        'Version' => VERSION,
-        'AWSAccessKeyId' => @access_key_id,
-        'AssociateTag' => @associate_tag
+      'Service' => SERVICE,
+      'Version' => VERSION,
+      'AWSAccessKeyId' => @access_key_id,
+      'AssociateTag' => @associate_tag
     }
 
     if ENDPOINT.scheme == HTTPS
@@ -35,11 +38,15 @@ class AmazonProduct
     end
   end
 
+  # @param operation [String] the operation name
+  # @param response_groups [Array<String>] a list of response groups
+  # @param operation_params [Hash] all other parameters required by the operation
+  # @return [Net::HTTPResponse]
   def get(operation, response_groups, operation_params = {})
     base_params = {
-        'Operation' => operation,
-        'ResponseGroup' => response_groups.join(COMMA),
-        'Timestamp' => Time.now.xmlschema
+      'Operation' => operation,
+      'ResponseGroup' => response_groups.join(COMMA),
+      'Timestamp' => Time.now.xmlschema
     }
 
     unsigned_params = operation_params.merge(@default_params.merge(base_params))
@@ -54,18 +61,24 @@ class AmazonProduct
 
   private
 
+  # @param string [String] the string to URL encode
+  # @return [String] the URL encoded string
   def url_encode(string)
     string.gsub(ENCODE) do
       PERCENT + $1.unpack('H2' * $1.bytesize).join(PERCENT).upcase
     end
   end
 
+  # @param params [Hash]
+  # @return [String]
   def query_string(params)
     params.map do |key, value|
       "%s=%s" % [key, url_encode(value)]
     end.sort.join(AMPERSAND)
   end
 
+  # @param params [Hash]
+  # @return [String] the request signature
   def signature(params)
     signable = "GET\n%s\n%s\n%s" % [ENDPOINT.host, ENDPOINT.path, query_string(params)]
     hmac = OpenSSL::HMAC.digest(DIGEST, @secret_access_key, signable)
