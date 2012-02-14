@@ -73,7 +73,7 @@ class AmazonProductAPI
 
     signed_params = unsigned_params.merge({'Signature' => signature(unsigned_params)})
 
-    request_uri = ENDPOINT.dup
+    request_uri = @endpoint.dup
     request_uri.query = query_string(signed_params)
 
     @connection.request(Net::HTTP::Get.new(request_uri.to_s, HEADERS))
@@ -100,7 +100,7 @@ class AmazonProductAPI
   # @param params [Hash]
   # @return [String] the request signature
   def signature(params)
-    signable = "GET\n%s\n%s\n%s" % [ENDPOINT.host, ENDPOINT.path, query_string(params)]
+    signable = "GET\n%s\n%s\n%s" % [@endpoint.host, @endpoint.path, query_string(params)]
     hmac = OpenSSL::HMAC.digest(DIGEST, @secret_access_key, signable)
     Base64.encode64(hmac).chomp
   end
