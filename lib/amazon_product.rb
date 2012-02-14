@@ -6,7 +6,18 @@ require 'amazon_product/version'
 
 # A very simple client for the Amazon Product Advertising API.
 class AmazonProduct
-  ENDPOINT = URI.parse('https://ecs.amazonaws.co.uk/onca/xml')
+  ENDPOINTS = {
+    :ca => 'https://ecs.amazonaws.ca/onca/xml',
+    :cn => 'https://webservices.amazon.cn/onca/xml',
+    :de => 'https://ecs.amazonaws.de/onca/xml',
+    :es => 'https://webservices.amazon.es/onca/xml',
+    :fr => 'https://ecs.amazonaws.fr/onca/xml',
+    :it => 'https://webservices.amazon.it/onca/xml',
+    :jp => 'https://ecs.amazonaws.jp/onca/xml',
+    :uk => 'https://ecs.amazonaws.co.uk/onca/xml',
+    :us => 'https://webservices.amazon.com/onca/xml'
+  }
+
   SERVICE = 'AWSECommerceService'
   API_VERSION = '2011-08-01'
   AMPERSAND = '&'
@@ -20,14 +31,21 @@ class AmazonProduct
 
   attr_reader :connection
 
+  # Possible locale values are - :ca, :cn, :de, :es, :fr, :it, :jp, :uk, :us
+  #
+  # @param locale [Symbol] locale corresponding to an API endpoint
   # @param access_key_id [String] your Amazon access key ID
   # @param secret_access_key [String] your Amazon secret access key
   # @param associate_tag [String] your Amazon associate tag
-  def initialize(access_key_id, secret_access_key, associate_tag)
+  def initialize(locale, access_key_id, secret_access_key, associate_tag)
+    # Check that the locale provided maps to an endpoint string:
+    raise ArgumentError, "invalid locale '#{locale}'" if ENDPOINTS[locale].nil?
+
+    @endpoint = URI.parse(ENDPOINTS[locale])
     @access_key_id = access_key_id
     @secret_access_key = secret_access_key
     @associate_tag = associate_tag
-    @connection = Net::HTTP.new(ENDPOINT.host, ENDPOINT.port)
+    @connection = Net::HTTP.new(@endpoint.host, @endpoint.port)
     @default_params = {
       'Service' => SERVICE,
       'Version' => API_VERSION,
@@ -35,7 +53,7 @@ class AmazonProduct
       'AssociateTag' => @associate_tag
     }
 
-    if ENDPOINT.scheme == HTTPS
+    if @endpoint.scheme == HTTPS
       @connection.use_ssl = true
     end
   end
