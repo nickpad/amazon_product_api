@@ -2,10 +2,10 @@ require 'base64'
 require 'net/http'
 require 'openssl'
 require 'time'
-require 'amazon_product/version'
+require 'amazon_product_api/version'
 
 # A very simple client for the Amazon Product Advertising API.
-class AmazonProduct
+class AmazonProductAPI
   ENDPOINTS = {
     :ca => 'https://ecs.amazonaws.ca/onca/xml',
     :cn => 'https://webservices.amazon.cn/onca/xml',
@@ -24,7 +24,7 @@ class AmazonProduct
   COMMA = ','
   PERCENT = '%'
   HTTPS = 'https'
-  USER_AGENT = "amazon_product #{VERSION}"
+  USER_AGENT = "amazon_product_api #{VERSION}"
   HEADERS = {'User-Agent' => USER_AGENT, 'Accept' => 'application/xml'}
   DIGEST = OpenSSL::Digest::SHA256.new
   ENCODE = /([^a-zA-Z0-9_.~-]+)/

@@ -1,4 +1,4 @@
-# amazon_product
+# amazon_product_api
 
 This is a (currently extremely minimal) Ruby client for the Amazon
 Product Advertising REST API.
