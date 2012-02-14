@@ -1,4 +1,4 @@
-# Apazon
+# amazon_product
 
 This is a (currently extremely minimal) Ruby client for the Amazon
 Product Advertising REST API.

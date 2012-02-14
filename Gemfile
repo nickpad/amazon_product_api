@@ -1,4 +1,6 @@
 source "http://rubygems.org"
 
-# Specify your gem's dependencies in apazon.gemspec
+# Specify your gem's dependencies in amazon_product.gemspec
 gemspec
+
+gem "rake"

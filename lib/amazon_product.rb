@@ -4,7 +4,7 @@ require 'openssl'
 require 'time'
 
 # A very simple client for the Amazon Product Advertising API.
-class Apazon
+class AmazonProduct
   ENDPOINT = URI.parse('https://ecs.amazonaws.co.uk/onca/xml')
   SERVICE = 'AWSECommerceService'
   VERSION = '2011-08-01'
