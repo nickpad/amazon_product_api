@@ -2,17 +2,19 @@ require 'base64'
 require 'net/http'
 require 'openssl'
 require 'time'
+require 'amazon_product/version'
 
 # A very simple client for the Amazon Product Advertising API.
 class AmazonProduct
   ENDPOINT = URI.parse('https://ecs.amazonaws.co.uk/onca/xml')
   SERVICE = 'AWSECommerceService'
-  VERSION = '2011-08-01'
+  API_VERSION = '2011-08-01'
   AMPERSAND = '&'
   COMMA = ','
   PERCENT = '%'
   HTTPS = 'https'
-  HEADERS = {'User-Agent' => 'AmazonAPI', 'Accept' => 'application/xml'}
+  USER_AGENT = "amazon_product #{VERSION}"
+  HEADERS = {'User-Agent' => USER_AGENT, 'Accept' => 'application/xml'}
   DIGEST = OpenSSL::Digest::SHA256.new
   ENCODE = /([^a-zA-Z0-9_.~-]+)/
 
@@ -28,7 +30,7 @@ class AmazonProduct
     @connection = Net::HTTP.new(ENDPOINT.host, ENDPOINT.port)
     @default_params = {
       'Service' => SERVICE,
-      'Version' => VERSION,
+      'Version' => API_VERSION,
       'AWSAccessKeyId' => @access_key_id,
       'AssociateTag' => @associate_tag
     }
